@@ -25,6 +25,11 @@ namespace CRUDWebAPI.Repositories {
 
             //return countryDetails;
         }
+
+        public async Task<int> GetRandomNumberAsync(int num1, int num2) {
+            Random rnd = new Random();
+            return rnd.Next(num1, num2);
+        }
     }
 }
 
