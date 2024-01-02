@@ -14,6 +14,7 @@ namespace CRUDWebAPI.Controllers {
     {
         private readonly ICountryService countryService;
         private readonly ILogger<CountryController> _logger;
+        private readonly string WebApi = "https://api.weatherapi.com/v1/forecast.json?key=39f8ecaf506c4f76b3f55139222906&q=london&days=3&aqi=yes&alerts=yes";
 
         public CountryController(ILogger<CountryController> logger, ICountryService countryService)
         {
@@ -39,6 +40,33 @@ namespace CRUDWebAPI.Controllers {
             catch(Exception ex)
             {
                 _logger.LogError(ex, "ICountryService.GetCountryByCityAsync encountered an exception.");
+                throw;
+            }
+        }
+
+        [HttpGet("getlast3days")]
+        public async Task<IActionResult> GetLast3DaysAsync()
+        {
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.BaseAddress = new Uri(WebApi);
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+                    HttpResponseMessage Res = client.GetAsync(WebApi).Result;
+                    List<object> ngo = null;
+                    if (Res.IsSuccessStatusCode)
+                    {
+                        var response = Res.Content.ReadAsStringAsync().Result;
+                        ngo = JsonContent.DeserializeObject<List<object>>(response);
+                    }
+                    return Ok(ngo);
+                }
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "ICountryService.GetLast3DaysAsync encountered an exception.");
                 throw;
             }
         }
