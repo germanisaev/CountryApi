@@ -43,7 +43,26 @@ namespace CRUDWebAPI.Controllers {
             }
         }
 
-        
+        [HttpGet("getrandom")]
+        public async Task<IActionResult> GetRandomNumberAsync(int num1, int num2)
+        {
+            try
+            {
+                var response = await countryService.GetRandomNumberAsync(num1, num2);
+
+                if(response == null)
+                {
+                    return NotFound();
+                }
+
+                return Ok(response);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(ex, "ICountryService.GetRandomNumberAsync encountered an exception.");
+                throw;
+            }
+        }
     }
 }
 
